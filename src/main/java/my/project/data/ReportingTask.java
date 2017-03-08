@@ -3,6 +3,7 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,5 +47,23 @@ public class ReportingTask {
         return new HashCodeBuilder(17, 37)
                 .append(name)
                 .toHashCode();
+    }
+
+    public void reportHours(String activityName, Date date, Float amount) {
+        ReportingActivity reportingActivity = findReportingActivityByName(activityName);
+        reportingActivity.reportHours(date, amount);
+    }
+
+    private ReportingActivity findReportingActivityByName(String activiyName) {
+        ReportingActivity reportingActivity = null;
+        for (ReportingActivity activity:getReportingActivityList()) {
+            if ( activity.getName().equals(activiyName) ) {
+                return activity;
+            }
+        }
+        reportingActivity = new ReportingActivity();
+        reportingActivity.setName(activiyName);
+        getReportingActivityList().add(reportingActivity);
+        return reportingActivity;
     }
 }

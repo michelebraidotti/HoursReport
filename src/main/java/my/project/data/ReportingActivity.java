@@ -3,6 +3,7 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,5 +47,9 @@ public class ReportingActivity {
         return new HashCodeBuilder(17, 37)
                 .append(name)
                 .toHashCode();
+    }
+
+    public void reportHours(Date date, Float amount) {
+        // Todo!!!!!
     }
 }
