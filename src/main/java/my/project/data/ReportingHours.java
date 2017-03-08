@@ -5,19 +5,20 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by michele on 3/7/17.
  */
 public class ReportingHours {
-    private Calendar date = Calendar.getInstance();
+    private Date date = new Date();
     private Float hoursReported = new Float("0.0");
 
-    public Calendar getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
