@@ -1,7 +1,6 @@
-package my.project;
+package my.project.parser;
 
 import my.project.data.ReportingUser;
-import my.project.parser.MarkusExcelParser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -9,15 +8,17 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by michele on 3/7/17.
+ * Created by michele on 3/9/17.
  */
-public class ReadFilesTest {
+public class MarkusExcelParserTest {
 
     @Test
-    public void testReadFile() throws IOException {
+    public void parse() throws IOException {
         String filePath = "src/test/resources/sample_data/test_Leistungsnachweis_2017.xlsx";
         ReportingUser expectedUser = new ReportingUser();
-        ReportingUser resultUser = MarkusExcelParser.parse(filePath);
+        expectedUser.setName("Michele");
+        MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
+        ReportingUser resultUser = markusExcelParser.parse();
 
         assertEquals(expectedUser, resultUser);
     }

@@ -3,6 +3,7 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class ReportingUser {
     private String name = "";
-    private List<ReportingTask> reportingTaskList;
+    private List<ReportingTask> reportingTaskList = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -34,14 +35,13 @@ public class ReportingUser {
         reportingTask.reportHours(activityName, date, amount);
     }
 
-    private ReportingTask findReportingTaskByName(String taskName) {
-        ReportingTask reportingTask = null;
+    public ReportingTask findReportingTaskByName(String taskName) {
         for (ReportingTask task:getReportingTaskList()) {
             if ( task.getName().equals(taskName) ) {
-                return reportingTask;
+                return task;
             }
         }
-        reportingTask = new ReportingTask();
+        ReportingTask reportingTask = new ReportingTask();
         reportingTask.setName(taskName);
         getReportingTaskList().add(reportingTask);
         return reportingTask;

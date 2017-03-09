@@ -3,6 +3,7 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,8 +11,8 @@ import java.util.List;
  * Created by michele on 3/7/17.
  */
 public class ReportingActivity {
-    private String name;
-    private List<ReportingHours> reportingHoursList;
+    private String name = "";
+    private List<ReportingHours> reportingHoursList = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -50,6 +51,19 @@ public class ReportingActivity {
     }
 
     public void reportHours(Date date, Float amount) {
-        // Todo!!!!!
+        ReportingHours reportingHours = findReportingHours(date);
+        reportingHours.setHoursReported(reportingHours.getHoursReported() + amount);
+    }
+
+    private ReportingHours findReportingHours(Date date) {
+        for (ReportingHours hours:getReportingHoursList()) {
+            if ( hours.getDate().equals(date) ) {
+                return hours;
+            }
+        }
+        ReportingHours reportingHours = new ReportingHours();
+        reportingHours.setDate(date);
+        getReportingHoursList().add(reportingHours);
+        return reportingHours;
     }
 }
