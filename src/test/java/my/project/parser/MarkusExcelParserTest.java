@@ -18,7 +18,8 @@ public class MarkusExcelParserTest {
         ReportingUser expectedUser = new ReportingUser();
         expectedUser.setName("Michele");
         MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
-        ReportingUser resultUser = markusExcelParser.parse();
+        markusExcelParser.parse();
+        ReportingUser resultUser = markusExcelParser.getReportingUser();
 
         assertEquals(expectedUser, resultUser);
     }
