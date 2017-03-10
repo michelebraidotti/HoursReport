@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,24 @@ public class ReportingUser {
         reportingTask.setName(taskName);
         getReportingTaskList().add(reportingTask);
         return reportingTask;
+    }
+
+    public Float[] reportHoursPerMonth() {
+        Float[] hoursPerMonth = new Float[12];
+        for (int i = 0; i < hoursPerMonth.length; i++) {
+            hoursPerMonth[i] = new Float("0.0");
+        }
+        for (ReportingTask reportingTask:getReportingTaskList()) {
+            for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {
+                for (ReportingHours reportingHours:reportingActivity.getReportingHoursList()) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(reportingHours.getDate());
+                    int month = cal.get(Calendar.MONTH);
+                    hoursPerMonth[month] = hoursPerMonth[month] + reportingHours.getHoursReported();
+                }
+            }
+        }
+        return hoursPerMonth;
     }
 
     @Override
