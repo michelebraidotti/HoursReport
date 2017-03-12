@@ -53,23 +53,6 @@ public class MarkusExcelParserTest {
         }
     }
 
-    @Test
-    public void reportHoursPerMonth() throws ParseException, IOException {
-        String filePath = "src/test/resources/sample_data/test_Leistungsnachweis_2017.xlsx";
-        MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
-        markusExcelParser.parse();
-        ReportingUser reportingUser = markusExcelParser.getReportingUser();
-        Float[] hoursPerMonth = reportingUser.reportHoursPerMonth();
-        // Jan. hours (the excel file reports 40 because of
-        // two entries 2.00 and 4.00 that are associated
-        // to an empty task and action and correctly skipped
-        assertEquals(new Float("34.00"), hoursPerMonth[0]);
-        // Feb. hours
-        assertEquals(new Float("0.00"), hoursPerMonth[1]);
-        // Dec. hours
-        assertEquals(new Float("0.00"), hoursPerMonth[11]);
-    }
-
     private ReportingUser expectedReportingUser() throws ParseException {
         ReportingUser expectedUser = new ReportingUser();
         expectedUser.setName("Michele");

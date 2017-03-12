@@ -3,10 +3,7 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by michele on 3/7/17.
@@ -64,6 +61,24 @@ public class ReportingUser {
             }
         }
         return hoursPerMonth;
+    }
+
+    public Map<String, Float> reportHoursPerTask() {
+        Map<String, Float> hoursPerTask = new HashMap<>();
+        for (ReportingTask reportingTask:getReportingTaskList()) {
+            for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {
+                String mapKey = reportingTask.getName() + " " + reportingActivity.getName();
+                for (ReportingHours reportingHours:reportingActivity.getReportingHoursList()) {
+                    if ( hoursPerTask.containsKey(mapKey) ) {
+                        hoursPerTask.put(mapKey, hoursPerTask.get(mapKey) + reportingHours.getHoursReported());
+                    }
+                    else {
+                        hoursPerTask.put(mapKey, reportingHours.getHoursReported());
+                    }
+                }
+            }
+        }
+        return hoursPerTask;
     }
 
     @Override

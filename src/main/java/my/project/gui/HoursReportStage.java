@@ -1,14 +1,22 @@
 package my.project.gui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import my.project.data.ReportingUser;
+import my.project.parser.MarkusExcelParser;
+
+import java.io.IOException;
+
+import static org.apache.poi.hssf.usermodel.HSSFShapeTypes.Rectangle;
 
 /**
  * Created by michele on 3/10/17.
@@ -22,8 +30,17 @@ public class HoursReportStage extends Stage {
     private static final String MAIN_WINDOW_TITLE_TEXT = "Hours Report";
     private static final double DEFAULT_WIDTH = 1200;
     private static final double DEFAULT_HEIGHT = 800;
+    private static final String REPORT_PER_MONTH_TAB_TITLE = "Hours per month";
+    private static final String REPORT_PER_TASK_TAB_TITLE = "Hours per task";
 
-    public HoursReportStage() {
+    private ObservableList<ReportingUser> reportingUsers;
+
+    public HoursReportStage() throws IOException {
+        String filePath = "src/test/resources/sample_data/test_Leistungsnachweis_2017.xlsx";
+        MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
+        markusExcelParser.parse();
+        reportingUsers = FXCollections.observableArrayList(markusExcelParser.getReportingUser());
+
         // main pane
         GridPane root = new GridPane();
         ColumnConstraints column = new ColumnConstraints();
@@ -33,6 +50,29 @@ public class HoursReportStage extends Stage {
 
         // menu bar
         root.add(buildMenuBar(), 0, rowNumber++);
+
+        // Tabbed pane
+        TabPane tabPane = new TabPane();
+        Tab hoursPerMonthTab = new Tab();
+        hoursPerMonthTab.setText(REPORT_PER_MONTH_TAB_TITLE);
+        HoursPerMonthTableView hoursPerMonthTableView = new HoursPerMonthTableView();
+        hoursPerMonthTableView.setItems(reportingUsers);
+        VBox hoursPerMonthTableBox = new VBox();
+        hoursPerMonthTableBox.setSpacing(5);
+        hoursPerMonthTableBox.setPadding(new Insets(10, 10, 10, 10));
+        hoursPerMonthTableView.setPrefHeight(700);
+        hoursPerMonthTableBox.getChildren().add(hoursPerMonthTableView);
+        hoursPerMonthTab.setContent(hoursPerMonthTableBox);
+        hoursPerMonthTab.setClosable(false);
+
+        Tab hoursPerTaskTab = new Tab();
+        hoursPerTaskTab.setText(REPORT_PER_TASK_TAB_TITLE);
+        hoursPerTaskTab.setContent(null);
+        hoursPerTaskTab.setClosable(false);
+
+        tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab);
+        root.add(tabPane, 0, rowNumber++);
+
         setTitle(MAIN_WINDOW_TITLE_TEXT);
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
