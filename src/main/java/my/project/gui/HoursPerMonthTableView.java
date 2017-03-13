@@ -8,6 +8,8 @@ import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import my.project.data.ReportingUser;
 
+import java.util.List;
+
 /**
  * Created by michele on 3/11/17.
  */
@@ -136,6 +138,5 @@ public class HoursPerMonthTableView extends TableView {
                 julHoursCol, augHoursCol, septHoursCol, octHoursCol,
                 novHoursCol, decHoursCol);
     }
-
 
 }

@@ -10,11 +10,17 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import my.project.data.ReportingUser;
+import my.project.data.ReportingUserException;
+import my.project.data.TeamReport;
 import my.project.parser.MarkusExcelParser;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.apache.poi.hssf.usermodel.HSSFShapeTypes.Rectangle;
 
@@ -33,13 +39,10 @@ public class HoursReportStage extends Stage {
     private static final String REPORT_PER_MONTH_TAB_TITLE = "Hours per month";
     private static final String REPORT_PER_TASK_TAB_TITLE = "Hours per task";
 
-    private ObservableList<ReportingUser> reportingUsers;
+    private ObservableList<ReportingUser> reportingUsers = FXCollections.observableArrayList();
+    private TeamReport teamReport = new TeamReport();
 
     public HoursReportStage() throws IOException {
-        String filePath = "src/test/resources/sample_data/test_Leistungsnachweis_2017.xlsx";
-        MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
-        markusExcelParser.parse();
-        reportingUsers = FXCollections.observableArrayList(markusExcelParser.getReportingUser());
 
         // main pane
         GridPane root = new GridPane();
@@ -53,28 +56,65 @@ public class HoursReportStage extends Stage {
 
         // Tabbed pane
         TabPane tabPane = new TabPane();
-        Tab hoursPerMonthTab = new Tab();
-        hoursPerMonthTab.setText(REPORT_PER_MONTH_TAB_TITLE);
-        HoursPerMonthTableView hoursPerMonthTableView = new HoursPerMonthTableView();
-        hoursPerMonthTableView.setItems(reportingUsers);
-        VBox hoursPerMonthTableBox = new VBox();
-        hoursPerMonthTableBox.setSpacing(5);
-        hoursPerMonthTableBox.setPadding(new Insets(10, 10, 10, 10));
-        hoursPerMonthTableView.setPrefHeight(700);
-        hoursPerMonthTableBox.getChildren().add(hoursPerMonthTableView);
-        hoursPerMonthTab.setContent(hoursPerMonthTableBox);
-        hoursPerMonthTab.setClosable(false);
+        Tab hoursPerMonthTab = buildHoursPerMonthTab();
 
-        Tab hoursPerTaskTab = new Tab();
-        hoursPerTaskTab.setText(REPORT_PER_TASK_TAB_TITLE);
-        hoursPerTaskTab.setContent(null);
-        hoursPerTaskTab.setClosable(false);
+        Tab hoursPerTaskTab = null;
+        try {
+            hoursPerTaskTab = buildHoursPerTaskTab();
+        } catch (ReportingUserException e) {
+            e.printStackTrace();
+        }
 
         tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab);
         root.add(tabPane, 0, rowNumber++);
 
         setTitle(MAIN_WINDOW_TITLE_TEXT);
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    }
+
+    private Tab buildHoursPerTaskTab() throws ReportingUserException {
+        Tab tab = new Tab();
+        tab.setText(REPORT_PER_TASK_TAB_TITLE);
+        HoursPerTaskTableView tableView = new HoursPerTaskTableView(teamReport.getReportingUsersNames());
+        tableView.setItems(generateDataInMap());
+        tab.setContent(tableView);
+        VBox vBox = new VBox();
+        vBox.setSpacing(5);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
+        tableView.setPrefHeight(700);
+        vBox.getChildren().add(tableView);
+        tab.setContent(vBox);
+        tab.setClosable(false);
+        return tab;
+    }
+    private ObservableList<Map> generateDataInMap() throws ReportingUserException {
+        ObservableList<Map> tableContent = FXCollections.observableArrayList();
+        for (String taskName:teamReport.getTaskNames()) {
+            Map<String, String> dataRow = new HashMap<>();
+            // first col is the task name
+            dataRow.put(HoursPerTaskTableView.TASK_COL_NAME, taskName);
+            // all other cols is the hours per task per user
+            for (String reportingUserName:teamReport.getReportingUsersNames()) {
+                dataRow.put(reportingUserName, teamReport.getTaskHours(taskName, reportingUserName).toString());
+            }
+            tableContent.add(dataRow);
+        }
+        return tableContent;
+    }
+
+    private Tab buildHoursPerMonthTab() {
+        Tab tab = new Tab();
+        tab.setText(REPORT_PER_MONTH_TAB_TITLE);
+        HoursPerMonthTableView tableView = new HoursPerMonthTableView();
+        tableView.setItems(reportingUsers);
+        VBox vBox = new VBox();
+        vBox.setSpacing(5);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
+        tableView.setPrefHeight(700);
+        vBox.getChildren().add(tableView);
+        tab.setContent(vBox);
+        tab.setClosable(false);
+        return tab;
     }
 
     private MenuBar buildMenuBar() {
@@ -103,7 +143,25 @@ public class HoursReportStage extends Stage {
     private class OpenFileAction implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
-
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open time report");
+            fileChooser.setInitialDirectory(
+                    new File(System.getProperty("user.home"))
+            );
+            File reportFile = fileChooser.showOpenDialog(HoursReportStage.this);
+            MarkusExcelParser markusExcelParser = null;
+            try {
+                markusExcelParser = new MarkusExcelParser(reportFile.getAbsolutePath());
+            } catch (IOException e) {
+                HoursRerportAlerts.errorDialog("Problem loading file", e).showAndWait();
+            }
+            markusExcelParser.parse();
+            ReportingUser reportingUser = markusExcelParser.getReportingUser();
+            teamReport = new TeamReport();
+            teamReport.addReportingUser(reportingUser);
+            reportingUsers.clear();
+            reportingUsers.add(reportingUser);
         }
     }
+
 }
