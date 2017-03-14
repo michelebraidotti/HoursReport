@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import my.project.data.ReportingUser;
@@ -19,10 +20,10 @@ import my.project.parser.MarkusExcelParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import static org.apache.poi.hssf.usermodel.HSSFShapeTypes.Rectangle;
 
 /**
  * Created by michele on 3/10/17.
@@ -38,6 +39,8 @@ public class HoursReportStage extends Stage {
     private static final double DEFAULT_HEIGHT = 800;
     private static final String REPORT_PER_MONTH_TAB_TITLE = "Hours per month";
     private static final String REPORT_PER_TASK_TAB_TITLE = "Hours per task";
+    private static final java.lang.String ABOUT_MENU_TEXT = "About";
+    private Tab hoursPerTaskTab;
 
     private ObservableList<ReportingUser> reportingUsers = FXCollections.observableArrayList();
     private TeamReport teamReport = new TeamReport();
@@ -58,12 +61,9 @@ public class HoursReportStage extends Stage {
         TabPane tabPane = new TabPane();
         Tab hoursPerMonthTab = buildHoursPerMonthTab();
 
-        Tab hoursPerTaskTab = null;
-        try {
-            hoursPerTaskTab = buildHoursPerTaskTab();
-        } catch (ReportingUserException e) {
-            e.printStackTrace();
-        }
+        hoursPerTaskTab = new Tab(REPORT_PER_TASK_TAB_TITLE);
+        hoursPerTaskTab.setContent(null);
+        hoursPerTaskTab.setClosable(false);
 
         tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab);
         root.add(tabPane, 0, rowNumber++);
@@ -72,20 +72,17 @@ public class HoursReportStage extends Stage {
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
-    private Tab buildHoursPerTaskTab() throws ReportingUserException {
-        Tab tab = new Tab();
-        tab.setText(REPORT_PER_TASK_TAB_TITLE);
+    private VBox buildHoursPerTaskTab() throws ReportingUserException {
+
         HoursPerTaskTableView tableView = new HoursPerTaskTableView(teamReport.getReportingUsersNames());
         tableView.setItems(generateDataInMap());
-        tab.setContent(tableView);
         VBox vBox = new VBox();
         vBox.setSpacing(5);
         vBox.setPadding(new Insets(10, 10, 10, 10));
         tableView.setPrefHeight(700);
         vBox.getChildren().add(tableView);
-        tab.setContent(vBox);
-        tab.setClosable(false);
-        return tab;
+
+        return vBox;
     }
     private ObservableList<Map> generateDataInMap() throws ReportingUserException {
         ObservableList<Map> tableContent = FXCollections.observableArrayList();
@@ -128,14 +125,63 @@ public class HoursReportStage extends Stage {
         openFileItem.setOnAction(new OpenFileAction());
 
         menuFile.getItems().addAll(openDirItem, openFileItem);
+
         Menu menuHelp = new Menu(HELP_MENU_TEXT);
+
+        MenuItem helpItem = new MenuItem(HELP_MENU_TEXT);
+        helpItem.setOnAction(new HelpAction());
+
+        MenuItem aboutItem = new MenuItem(ABOUT_MENU_TEXT);
+        aboutItem.setOnAction(new AboutAction());
+
+        menuHelp.getItems().addAll(helpItem, aboutItem);
+
         menuBar.getMenus().addAll(menuFile, menuHelp);
         return menuBar;
+    }
+
+    private class HelpAction implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent event) {
+            HoursRerportAlerts.infoDialog("Help", "Do you need help?", "Well ... there's no help.").showAndWait();
+        }
+    }
+
+    private class AboutAction implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent event) {
+            HoursRerportAlerts.infoDialog("About", "Who did this?", "Coders anonymous").showAndWait();
+        }
     }
 
     private class OpenDirAction implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event) {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Open directory report");
+            directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            File reportsDir = directoryChooser.showDialog(HoursReportStage.this);
+            File[] files = reportsDir.listFiles();
+            List<ReportingUser> reportingUserList = new ArrayList<>();
+            for (File file:files) {
+                try {
+                    MarkusExcelParser markusExcelParser = new MarkusExcelParser(file.getAbsolutePath());
+                    markusExcelParser.parse();
+                    reportingUserList.add(markusExcelParser.getReportingUser());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            teamReport = new TeamReport();
+            teamReport.addAllReportingUsers(reportingUsers);
+            reportingUsers.clear();
+            reportingUsers.addAll(reportingUsers);
+            // "Refresh" tab
+            try {
+                hoursPerTaskTab.setContent(buildHoursPerTaskTab());
+            } catch (ReportingUserException e) {
+                e.printStackTrace();
+            }
 
         }
     }
@@ -161,6 +207,12 @@ public class HoursReportStage extends Stage {
             teamReport.addReportingUser(reportingUser);
             reportingUsers.clear();
             reportingUsers.add(reportingUser);
+            // "Refresh" tab
+            try {
+                hoursPerTaskTab.setContent(buildHoursPerTaskTab());
+            } catch (ReportingUserException e) {
+                e.printStackTrace();
+            }
         }
     }
 
