@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class ReportingUser {
     private String name = "";
+    private int year = 0;
     private List<ReportingTask> reportingTaskList = new ArrayList<>();
 
     public String getName() {
@@ -18,6 +19,14 @@ public class ReportingUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public List<ReportingTask> getReportingTaskList() {

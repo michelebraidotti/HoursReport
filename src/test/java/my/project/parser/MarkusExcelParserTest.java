@@ -30,6 +30,7 @@ public class MarkusExcelParserTest {
         prettyPrint(resultUser);
 
         assertEquals(expectedUser, resultUser);
+        assertEquals(expectedUser.getYear(), resultUser.getYear());
         assertEquals(expectedUser.getReportingTaskList().size(), resultUser.getReportingTaskList().size());
 
         for (ReportingTask expectedReportingTask:expectedUser.getReportingTaskList()) {
@@ -56,6 +57,7 @@ public class MarkusExcelParserTest {
     private ReportingUser expectedReportingUser() throws ParseException {
         ReportingUser expectedUser = new ReportingUser();
         expectedUser.setName("Michele");
+        expectedUser.setYear(2017);
         DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
         expectedUser.reportHours("Holidays", "No activity specified", formatter.parse("Mon Jan 02 00:00:00 CET 2017"), new Float( "4.0"));
         expectedUser.reportHours("Overhead", "No activity specified", formatter.parse("Thu Jan 05 00:00:00 CET 2017"), new Float("2.0"));

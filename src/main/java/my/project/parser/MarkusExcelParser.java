@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -20,6 +21,8 @@ public class MarkusExcelParser {
     private static final String NO_ACTIVITY = "No activity specified";
     private static int USER_NAME_COL = 1;
     private static int USER_NAME_ROW = 0;
+    private static int DATE_COL = 0;
+    private static int DATE_ROW = 3;
     private static int TASK_COL = 0;
     private static int ACTIVITY_COL = 1;
     private static int DAYS_ROW = 4;
@@ -39,10 +42,21 @@ public class MarkusExcelParser {
     }
 
     public void parse() {
-        String userName = parseUserName();
         reportingUser = new ReportingUser();
-        reportingUser.setName(userName);
+        reportingUser.setName(parseUserName());
+        reportingUser.setYear(parseYear());
         parseTaskList();
+    }
+
+    private int parseYear() {
+        Sheet sheet = workbook.getSheetAt(0);
+        Row row = sheet.getRow(DATE_ROW);
+        Cell cell = row.getCell(DATE_COL);
+        Date date = cell.getDateCellValue();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int year = cal.get(Calendar.YEAR);
+        return year;
     }
 
     private void parseTaskList() {

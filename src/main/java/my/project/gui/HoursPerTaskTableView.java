@@ -18,7 +18,8 @@ public class HoursPerTaskTableView extends TableView {
 
     public static final String TASK_COL_NAME = "Tasks";
 
-    public HoursPerTaskTableView(List<String> reportingUsersNames) {
+
+    public void createColumns(List<String> reportingUsersNames) {
         TableColumn<Map, String> taskNameColumn = new TableColumn<>(TASK_COL_NAME);
         taskNameColumn.setCellValueFactory(new MapValueFactory(TASK_COL_NAME));
         taskNameColumn.setMinWidth(100);
@@ -29,23 +30,18 @@ public class HoursPerTaskTableView extends TableView {
             column.setMinWidth(100);
             this.getColumns().add(column);
             Callback<TableColumn<Map, String>, TableCell<Map, String>>
-                cellFactoryForMap = (TableColumn<Map, String> p) ->
-                new TextFieldTableCell(new StringConverter() {
-                    @Override
-                    public String toString(Object t) {
-                        return t.toString();
-                    }
-                    @Override
-                    public Object fromString(String string) {
-                        return string;
-                    }
-                });
+                    cellFactoryForMap = (TableColumn<Map, String> p) ->
+                    new TextFieldTableCell(new StringConverter() {
+                        @Override
+                        public String toString(Object t) {
+                            return t.toString();
+                        }
+                        @Override
+                        public Object fromString(String string) {
+                            return string;
+                        }
+                    });
             column.setCellFactory(cellFactoryForMap);
         }
-    }
-
-
-    public HoursPerTaskTableView() {
-
     }
 }

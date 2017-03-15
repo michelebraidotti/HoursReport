@@ -66,4 +66,8 @@ public class ReportingActivity {
         getReportingHoursList().add(reportingHours);
         return reportingHours;
     }
+
+    public Float getHoursReportedByDate(Date date) {
+        return findReportingHours(date).getHoursReported();
+    }
 }

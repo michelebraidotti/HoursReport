@@ -39,11 +39,13 @@ public class HoursReportStage extends Stage {
     private static final double DEFAULT_HEIGHT = 800;
     private static final String REPORT_PER_MONTH_TAB_TITLE = "Hours per month";
     private static final String REPORT_PER_TASK_TAB_TITLE = "Hours per task";
-    private static final java.lang.String ABOUT_MENU_TEXT = "About";
-    private Tab hoursPerTaskTab;
+    private static final String ABOUT_MENU_TEXT = "About";
+    private static final String HOURS_PER_DAY_TAB_TITLE = "Hours per day";
+
 
     private ObservableList<ReportingUser> reportingUsers = FXCollections.observableArrayList();
-    private TeamReport teamReport = new TeamReport();
+    private Tab hoursPerTaskTab;
+    private final Tab hoursPerDayTab;
 
     public HoursReportStage() throws IOException {
 
@@ -57,35 +59,47 @@ public class HoursReportStage extends Stage {
         // menu bar
         root.add(buildMenuBar(), 0, rowNumber++);
 
-        // Tabbed pane
         TabPane tabPane = new TabPane();
+        // hours per month tab
         Tab hoursPerMonthTab = buildHoursPerMonthTab();
 
+        // hours per task tab
         hoursPerTaskTab = new Tab(REPORT_PER_TASK_TAB_TITLE);
         hoursPerTaskTab.setContent(null);
         hoursPerTaskTab.setClosable(false);
 
-        tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab);
+        // hours per day tab
+        hoursPerDayTab = new Tab(HOURS_PER_DAY_TAB_TITLE);
+        hoursPerDayTab.setContent(null);
+        hoursPerDayTab.setClosable(false);
+
+        tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab, hoursPerDayTab);
         root.add(tabPane, 0, rowNumber++);
 
         setTitle(MAIN_WINDOW_TITLE_TEXT);
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
-    private VBox buildHoursPerTaskTab() throws ReportingUserException {
-
-        HoursPerTaskTableView tableView = new HoursPerTaskTableView(teamReport.getReportingUsersNames());
-        tableView.setItems(generateDataInMap());
-        VBox vBox = new VBox();
-        vBox.setSpacing(5);
-        vBox.setPadding(new Insets(10, 10, 10, 10));
-        tableView.setPrefHeight(700);
-        vBox.getChildren().add(tableView);
-
-        return vBox;
+    private TabPane updateHoursPerDayTab() {
+        TabPane tabPane = new TabPane();
+        for (ReportingUser reportingUser:reportingUsers) {
+            Tab tab = new Tab(reportingUser.getName());
+            tab.setContent(new ReportingUserCalendarView(reportingUser));
+            tab.setClosable(false);
+            tabPane.getTabs().add(tab);
+        }
+        return tabPane;
     }
-    private ObservableList<Map> generateDataInMap() throws ReportingUserException {
-        ObservableList<Map> tableContent = FXCollections.observableArrayList();
+
+    private void updateHoursPerTaskTab() throws ReportingUserException {
+        // Create and compute report
+        TeamReport teamReport = new TeamReport();
+        teamReport.addAllReportingUsers(reportingUsers);
+        // Create the table
+        HoursPerTaskTableView hoursPerTaskTableView = new HoursPerTaskTableView();
+        hoursPerTaskTableView.createColumns(teamReport.getReportingUsersNames());
+        // Populating the tables
+        ObservableList<Map> hoursPerTaskData = FXCollections.observableArrayList();
         for (String taskName:teamReport.getTaskNames()) {
             Map<String, String> dataRow = new HashMap<>();
             // first col is the task name
@@ -94,9 +108,17 @@ public class HoursReportStage extends Stage {
             for (String reportingUserName:teamReport.getReportingUsersNames()) {
                 dataRow.put(reportingUserName, teamReport.getTaskHours(taskName, reportingUserName).toString());
             }
-            tableContent.add(dataRow);
+            hoursPerTaskData.add(dataRow);
         }
-        return tableContent;
+        hoursPerTaskTableView.setItems(hoursPerTaskData);
+
+        // add to table to tab
+        VBox vBox = new VBox();
+        vBox.setSpacing(5);
+        vBox.setPadding(new Insets(10, 10, 10, 10));
+        hoursPerTaskTableView.setPrefHeight(700);
+        vBox.getChildren().add(hoursPerTaskTableView);
+        hoursPerTaskTab.setContent(vBox);
     }
 
     private Tab buildHoursPerMonthTab() {
@@ -172,17 +194,15 @@ public class HoursReportStage extends Stage {
                     e.printStackTrace();
                 }
             }
-            teamReport = new TeamReport();
-            teamReport.addAllReportingUsers(reportingUsers);
             reportingUsers.clear();
             reportingUsers.addAll(reportingUsers);
-            // "Refresh" tab
+            // "refresh" task view
             try {
-                hoursPerTaskTab.setContent(buildHoursPerTaskTab());
+                updateHoursPerTaskTab();
             } catch (ReportingUserException e) {
                 e.printStackTrace();
             }
-
+            hoursPerDayTab.setContent(updateHoursPerDayTab());
         }
     }
 
@@ -203,16 +223,14 @@ public class HoursReportStage extends Stage {
             }
             markusExcelParser.parse();
             ReportingUser reportingUser = markusExcelParser.getReportingUser();
-            teamReport = new TeamReport();
-            teamReport.addReportingUser(reportingUser);
-            reportingUsers.clear();
             reportingUsers.add(reportingUser);
-            // "Refresh" tab
+            // "refresh" task view
             try {
-                hoursPerTaskTab.setContent(buildHoursPerTaskTab());
+                updateHoursPerTaskTab();
             } catch (ReportingUserException e) {
                 e.printStackTrace();
             }
+            hoursPerDayTab.setContent(updateHoursPerDayTab());
         }
     }
 
