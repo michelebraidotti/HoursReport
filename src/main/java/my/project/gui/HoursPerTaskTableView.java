@@ -29,19 +29,6 @@ public class HoursPerTaskTableView extends TableView {
             column.setCellValueFactory(new MapValueFactory(reportingUserName));
             column.setMinWidth(100);
             this.getColumns().add(column);
-            Callback<TableColumn<Map, String>, TableCell<Map, String>>
-                    cellFactoryForMap = (TableColumn<Map, String> p) ->
-                    new TextFieldTableCell(new StringConverter() {
-                        @Override
-                        public String toString(Object t) {
-                            return t.toString();
-                        }
-                        @Override
-                        public Object fromString(String string) {
-                            return string;
-                        }
-                    });
-            column.setCellFactory(cellFactoryForMap);
         }
     }
 }

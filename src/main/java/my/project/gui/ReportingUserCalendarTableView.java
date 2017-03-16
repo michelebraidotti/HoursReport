@@ -30,14 +30,6 @@ public class ReportingUserCalendarTableView extends TableView {
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.MONTH, monthNumber);
         cal.set(Calendar.YEAR, reportingUser.getYear());
-//        while ( monthNumber==cal.get(Calendar.MONTH) ) {
-//            int day = cal.get(Calendar.DAY_OF_MONTH);
-//            if ( cal.get(Calendar.DAY_OF_WEEK) == 0 || cal.get(Calendar.DAY_OF_WEEK) == 6 ) { // Sat or Sunday
-//
-//            }
-//            cal.add(Calendar.DAY_OF_MONTH, 1);
-//        }
-
         // Create first col
         TableColumn<Map, String> taskNameColumn = new TableColumn<>(TASK_COL_NAME);
         taskNameColumn.setCellValueFactory(new MapValueFactory(TASK_COL_NAME));
@@ -48,21 +40,9 @@ public class ReportingUserCalendarTableView extends TableView {
             TableColumn<Map, String> column = new TableColumn<>(getColName(cal));
             column.setCellValueFactory(new MapValueFactory(getColName(cal)));
             column.setMinWidth(50);
-            this.getColumns().add(column);
-            Callback<TableColumn<Map, String>, TableCell<Map, String>>
-                cellFactoryForMap = (TableColumn<Map, String> p) ->
-                new TextFieldTableCell(new StringConverter() {
-                    @Override
-                    public String toString(Object t) {
-                        return t.toString();
-                    }
-
-                    @Override
-                    public Object fromString(String string) {
-                        return string;
-                    }
-                });
-            column.setCellFactory(cellFactoryForMap);
+            int dayOfTheWeek = cal.get(Calendar.DAY_OF_WEEK);
+            column.setCellFactory(c -> { return new CalendarViewCellFactory(dayOfTheWeek); });
+            getColumns().add(column);
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         // fill the table with data
@@ -74,9 +54,10 @@ public class ReportingUserCalendarTableView extends TableView {
                 cal.set(Calendar.DAY_OF_MONTH, 1);
                 cal.set(Calendar.MONTH, monthNumber);
                 cal.set(Calendar.YEAR, reportingUser.getYear());
-                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
                 while (monthNumber == cal.get(Calendar.MONTH)) {
                     dataRow.put(getColName(cal), reportingActivity.getHoursReportedByDate(cal.getTime()).toString());
                     cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -92,4 +73,34 @@ public class ReportingUserCalendarTableView extends TableView {
         int month = cal.get(Calendar.MONTH) + 1;
         return  day + "/" + month;
     }
+
+    private class CalendarViewCellFactory extends TableCell<Map, String> {
+        int dayOfTheWeek;
+
+        public CalendarViewCellFactory(int dayOfTheWeek) {
+            this.dayOfTheWeek = dayOfTheWeek;
+        }
+
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (item == null || empty) {
+                setText(null);
+                setStyle("");
+            } else {
+                setText(item);
+                if (dayOfTheWeek == Calendar.SATURDAY || dayOfTheWeek == Calendar.SUNDAY) {
+                    setTextFill(Color.ORANGE);
+                    setStyle("-fx-background-color: pink ");
+                } else if (item.equals("0.0")) {
+                    setTextFill(Color.GRAY);
+                } else {
+                    // no special looks applied
+                }
+            }
+        }
+    }
 }
+
+
