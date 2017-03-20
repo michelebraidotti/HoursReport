@@ -4,7 +4,6 @@ package my.project.data;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**

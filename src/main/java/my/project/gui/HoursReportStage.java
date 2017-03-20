@@ -13,8 +13,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import my.project.data.ReportingException;
 import my.project.data.ReportingUser;
-import my.project.data.ReportingUserException;
 import my.project.data.TeamReport;
 import my.project.parser.MarkusExcelParser;
 
@@ -91,7 +91,7 @@ public class HoursReportStage extends Stage {
         return tabPane;
     }
 
-    private void updateHoursPerTaskTab() throws ReportingUserException {
+    private void updateHoursPerTaskTab() throws ReportingException {
         // Create and compute report
         TeamReport teamReport = new TeamReport();
         teamReport.addAllReportingUsers(reportingUsers);
@@ -195,11 +195,11 @@ public class HoursReportStage extends Stage {
                 }
             }
             reportingUsers.clear();
-            reportingUsers.addAll(reportingUsers);
+            reportingUsers.addAll(reportingUserList);
             // "refresh" task view
             try {
                 updateHoursPerTaskTab();
-            } catch (ReportingUserException e) {
+            } catch (ReportingException e) {
                 e.printStackTrace();
             }
             hoursPerDayTab.setContent(updateHoursPerDayTab());
@@ -227,7 +227,7 @@ public class HoursReportStage extends Stage {
             // "refresh" task view
             try {
                 updateHoursPerTaskTab();
-            } catch (ReportingUserException e) {
+            } catch (ReportingException e) {
                 e.printStackTrace();
             }
             hoursPerDayTab.setContent(updateHoursPerDayTab());

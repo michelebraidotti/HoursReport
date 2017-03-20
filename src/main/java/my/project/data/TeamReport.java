@@ -34,7 +34,7 @@ public class TeamReport {
         return reportingUsersNames;
     }
 
-    public Float getTaskHours(String task, String userName) throws ReportingUserException {
+    public Float getTaskHours(String task, String userName) throws ReportingException {
         Map<String, Float> hoursPerTask = getReportingUser(userName).reportHoursPerTask();
         if ( hoursPerTask.containsKey(task)) {
             return hoursPerTask.get(task);
@@ -42,12 +42,12 @@ public class TeamReport {
         return new Float("0.0");
     }
 
-    private ReportingUser getReportingUser(String userName) throws ReportingUserException {
+    private ReportingUser getReportingUser(String userName) throws ReportingException {
         for (ReportingUser reportingUser:reportingUsers) {
             if (reportingUser.getName().equals(userName)) {
                 return reportingUser;
             }
         }
-        throw  new ReportingUserException("User " + userName + " not found.");
+        throw  new ReportingException("User " + userName + " not found.");
     }
 }

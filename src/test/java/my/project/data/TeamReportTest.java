@@ -92,7 +92,7 @@ public class TeamReportTest {
     }
 
     @Test
-    public void getTaskHours() throws Exception, ReportingUserException {
+    public void getTaskHours() throws Exception, ReportingException {
         ReportingUser reportingUser = generateReportingUser();
         TeamReport teamReport = new TeamReport();
         teamReport.addReportingUser(reportingUser);
