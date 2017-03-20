@@ -14,11 +14,17 @@ public class ReportingDay {
         this.day = day;
     }
 
+    public int getDay() {
+        return day;
+    }
+
     public void reportHours(String taskName, String activityName, Float hours) {
         Task task = findTask(taskName);
         Activity activity = task.findActivity(activityName);
         activity.hours = hours;
     }
+
+    //public void addHours(String taskName, String activityName, Float hours) {}
 
     public Float totalHours() {
         Float total = new Float("0.0");

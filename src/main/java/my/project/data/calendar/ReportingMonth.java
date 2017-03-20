@@ -37,6 +37,14 @@ public class ReportingMonth {
         }
     }
 
+    public String getReportingUser() {
+        return reportingUser;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
     public void reportHours(String taskName, String activityName, Date day, Float amount) throws ReportingException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(day);

@@ -5,5 +5,6 @@ package my.project.data;
  */
 public class ReportingException extends Exception {
     public ReportingException(String s) {
+        super(s);
     }
 }
