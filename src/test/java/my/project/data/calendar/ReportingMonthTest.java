@@ -98,6 +98,13 @@ public class ReportingMonthTest {
         ReportingMonth sameMonth = new ReportingMonth(testUser, month, year - 1);
         ReportingMonth otherMonth = new ReportingMonth(testUser, month + 1, year);
         ReportingMonth yetAnotherMonth = new ReportingMonth("differentUser", month, year);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, oneDay);
+        Date date = new Date();
+        date.setTime(cal.getTimeInMillis());
+        sameMonth.reportHours("task0", "activity0", date, new Float("1.0"));
         assertEquals(oneMonth, sameMonth);
         assertNotEquals(oneMonth, otherMonth);
         assertNotEquals(oneMonth, yetAnotherMonth);

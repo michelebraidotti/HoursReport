@@ -47,18 +47,33 @@ public class ReportingDay {
         return task;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ReportingDay that = (ReportingDay) o;
+
+        return day == that.day;
+    }
+
+    @Override
+    public int hashCode() {
+        return day;
+    }
+
     private class Task {
         public String name;
         public List<Activity> activityList = new ArrayList<>();
 
-        public Activity findActivity(String acivityName) {
+        public Activity findActivity(String activityName) {
             for (Activity activity:activityList) {
-                if ( activity.name.equals(acivityName) ) {
+                if ( activity.name.equals(activityName) ) {
                     return activity;
                 }
             }
             Activity activity = new Activity();
-            activity.name = acivityName;
+            activity.name = activityName;
             activityList.add(activity);
             return activity;
         }

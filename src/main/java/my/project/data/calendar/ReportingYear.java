@@ -13,7 +13,7 @@ import java.util.Date;
 public class ReportingYear {
     private int year;
     private String reportingUser;
-    ReportingMonth[] reportingMonths;
+    private ReportingMonth[] reportingMonths;
 
     public ReportingYear(int year, String reportingUser) {
         this.year = year;
