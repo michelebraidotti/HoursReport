@@ -1,5 +1,9 @@
 package my.project.data;
 
+import my.project.data.calendar.ReportingYear;
+import my.project.data.task.ReportingActivity;
+import my.project.data.task.ReportingHours;
+import my.project.data.task.ReportingTask;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -12,37 +16,33 @@ public class ReportingUser {
     private String name = "";
     private int year = 0;
     private List<ReportingTask> reportingTaskList = new ArrayList<>();
+    private ReportingYear reportingYear;
+
+    public ReportingUser(int year, String userName) {
+        this.year = year;
+        this.name = userName;
+        reportingYear = new ReportingYear(year, userName);
+    }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getYear() {
         return year;
     }
 
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     public List<ReportingTask> getReportingTaskList() {
         return reportingTaskList;
     }
 
-    public void setReportingTaskList(List<ReportingTask> reportingTaskList) {
-        this.reportingTaskList = reportingTaskList;
-    }
-
-    public void reportHours(String taskName, String activityName, Date date, Float amount) {
+    public void reportHours(String taskName, String activityName, Date date, Float amount) throws ReportingException {
         ReportingTask reportingTask = findReportingTaskByName(taskName);
         reportingTask.reportHours(activityName, date, amount);
+        reportingYear.reportHours(taskName, activityName, date, amount);
     }
 
-    public ReportingTask findReportingTaskByName(String taskName) {
+    private ReportingTask findReportingTaskByName(String taskName) {
         for (ReportingTask task:getReportingTaskList()) {
             if ( task.getName().equals(taskName) ) {
                 return task;
@@ -54,25 +54,11 @@ public class ReportingUser {
         return reportingTask;
     }
 
-    public Float[] reportHoursPerMonth() {
-        Float[] hoursPerMonth = new Float[12];
-        for (int i = 0; i < hoursPerMonth.length; i++) {
-            hoursPerMonth[i] = new Float("0.0");
-        }
-        for (ReportingTask reportingTask:getReportingTaskList()) {
-            for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {
-                for (ReportingHours reportingHours:reportingActivity.getReportingHoursList()) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(reportingHours.getDate());
-                    int month = cal.get(Calendar.MONTH);
-                    hoursPerMonth[month] = hoursPerMonth[month] + reportingHours.getHoursReported();
-                }
-            }
-        }
-        return hoursPerMonth;
+    public Float totalHoursPerMonth(int month) {
+        return reportingYear.totalHoursPerMonth(month);
     }
 
-    public Map<String, Float> reportHoursPerTask() {
+    public Map<String, Float> totalHoursPerTask() {
         Map<String, Float> hoursPerTask = new HashMap<>();
         for (ReportingTask reportingTask:getReportingTaskList()) {
             for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {

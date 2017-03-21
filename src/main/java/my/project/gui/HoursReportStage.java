@@ -186,21 +186,7 @@ public class HoursReportStage extends Stage {
             File[] files = reportsDir.listFiles();
             List<ReportingUser> reportingUserList = new ArrayList<>();
             for (File file:files) {
-                try {
-                    MarkusExcelParser markusExcelParser = new MarkusExcelParser(file.getAbsolutePath());
-                    markusExcelParser.parse();
-                    reportingUserList.add(markusExcelParser.getReportingUser());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            reportingUsers.clear();
-            reportingUsers.addAll(reportingUserList);
-            // "refresh" task view
-            try {
-                updateHoursPerTaskTab();
-            } catch (ReportingException e) {
-                e.printStackTrace();
+                parseFile(file);
             }
             hoursPerDayTab.setContent(updateHoursPerDayTab());
         }
@@ -215,23 +201,32 @@ public class HoursReportStage extends Stage {
                     new File(System.getProperty("user.home"))
             );
             File reportFile = fileChooser.showOpenDialog(HoursReportStage.this);
-            MarkusExcelParser markusExcelParser = null;
-            try {
-                markusExcelParser = new MarkusExcelParser(reportFile.getAbsolutePath());
-            } catch (IOException e) {
-                HoursRerportAlerts.errorDialog("Problem loading file", e).showAndWait();
-            }
-            markusExcelParser.parse();
-            ReportingUser reportingUser = markusExcelParser.getReportingUser();
-            reportingUsers.add(reportingUser);
-            // "refresh" task view
-            try {
-                updateHoursPerTaskTab();
-            } catch (ReportingException e) {
-                e.printStackTrace();
-            }
-            hoursPerDayTab.setContent(updateHoursPerDayTab());
+            parseFile(reportFile);
         }
+    }
+
+    private void parseFile(File file) {
+        MarkusExcelParser markusExcelParser = null;
+        try {
+            markusExcelParser = new MarkusExcelParser(file.getAbsolutePath());
+        } catch (IOException e) {
+            HoursRerportAlerts.errorDialog("Problem loading file", e).showAndWait();
+        }
+        try {
+            markusExcelParser.parse();
+        } catch (ReportingException e) {
+            HoursRerportAlerts.errorDialog("Error during reporting", e);
+        }
+        ReportingUser reportingUser = markusExcelParser.getReportingUser();
+        reportingUsers.add(reportingUser);
+        // TODO the following must be replaced by a listener for reporting users
+        // "refresh" task view
+//        try {
+//            updateHoursPerTaskTab();
+//        } catch (ReportingException e) {
+//            HoursRerportAlerts.errorDialog("Error during reporting", e);
+//        }
+//        hoursPerDayTab.setContent(updateHoursPerDayTab());
     }
 
 }

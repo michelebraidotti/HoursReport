@@ -6,12 +6,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.MapValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
-import my.project.data.ReportingActivity;
-import my.project.data.ReportingTask;
+import my.project.data.task.ReportingActivity;
+import my.project.data.task.ReportingTask;
 import my.project.data.ReportingUser;
 
 import java.util.Calendar;

@@ -1,7 +1,6 @@
-package my.project.data;
+package my.project.data.task;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 

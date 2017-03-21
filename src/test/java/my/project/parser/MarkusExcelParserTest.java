@@ -1,8 +1,9 @@
 package my.project.parser;
 
-import my.project.data.ReportingActivity;
-import my.project.data.ReportingHours;
-import my.project.data.ReportingTask;
+import my.project.data.ReportingException;
+import my.project.data.task.ReportingActivity;
+import my.project.data.task.ReportingHours;
+import my.project.data.task.ReportingTask;
 import my.project.data.ReportingUser;
 import org.junit.Test;
 
@@ -10,7 +11,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 public class MarkusExcelParserTest {
 
     @Test
-    public void parse() throws IOException, ParseException {
+    public void parse() throws IOException, ParseException, ReportingException {
         String filePath = "src/test/resources/sample_data/test_Leistungsnachweis_2017.xlsx";
         ReportingUser expectedUser = expectedReportingUser();
         MarkusExcelParser markusExcelParser = new MarkusExcelParser(filePath);
@@ -32,32 +32,10 @@ public class MarkusExcelParserTest {
         assertEquals(expectedUser, resultUser);
         assertEquals(expectedUser.getYear(), resultUser.getYear());
         assertEquals(expectedUser.getReportingTaskList().size(), resultUser.getReportingTaskList().size());
-
-        for (ReportingTask expectedReportingTask:expectedUser.getReportingTaskList()) {
-            assertEquals(expectedReportingTask, resultUser.findReportingTaskByName(expectedReportingTask.getName()));
-            for (ReportingActivity expectedReportingActivity:expectedReportingTask.getReportingActivityList()) {
-                assertEquals(expectedReportingActivity,
-                        resultUser
-                                .findReportingTaskByName(expectedReportingTask.getName())
-                                .findReportingActivityByName(expectedReportingActivity.getName()));
-                for (ReportingHours expectedReportingHours:expectedReportingActivity.getReportingHoursList()) {
-                    List<ReportingHours> resultReportingHours = resultUser
-                            .findReportingTaskByName(expectedReportingTask.getName())
-                            .findReportingActivityByName(expectedReportingActivity.getName()).getReportingHoursList();
-                    for (ReportingHours resulExporingHours:resultReportingHours) {
-                        if (expectedReportingHours.getDate().equals(resulExporingHours.getDate())) {
-                            assertEquals(expectedReportingHours.getHoursReported(), resulExporingHours.getHoursReported());
-                        }
-                    }
-                }
-            }
-        }
     }
 
-    private ReportingUser expectedReportingUser() throws ParseException {
-        ReportingUser expectedUser = new ReportingUser();
-        expectedUser.setName("Michele");
-        expectedUser.setYear(2017);
+    private ReportingUser expectedReportingUser() throws ParseException, ReportingException {
+        ReportingUser expectedUser = new ReportingUser(2017, "Michele");
         DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
         expectedUser.reportHours("Holidays", "No activity specified", formatter.parse("Mon Jan 02 00:00:00 CET 2017"), new Float( "4.0"));
         expectedUser.reportHours("Overhead", "No activity specified", formatter.parse("Thu Jan 05 00:00:00 CET 2017"), new Float("2.0"));

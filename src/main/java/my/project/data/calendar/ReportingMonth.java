@@ -1,9 +1,6 @@
 package my.project.data.calendar;
 
-import my.project.data.ReportingActivity;
 import my.project.data.ReportingException;
-import my.project.data.ReportingHours;
-import my.project.data.ReportingTask;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 

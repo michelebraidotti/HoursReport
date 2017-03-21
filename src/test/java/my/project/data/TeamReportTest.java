@@ -16,10 +16,11 @@ import static org.junit.Assert.assertTrue;
  * Created by michele on 3/13/17.
  */
 public class TeamReportTest {
+    private int year = 2017;
+    private String userName = "Michele";
 
-    private ReportingUser generateReportingUser() throws ParseException {
-        ReportingUser reportingUser = new ReportingUser();
-        reportingUser.setName("Michele");
+    private ReportingUser generateReportingUser(int year, String userName) throws ParseException, ReportingException {
+        ReportingUser reportingUser = new ReportingUser(year, userName);
         DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
         reportingUser.reportHours("Holidays", "No activity specified", formatter.parse("Mon Jan 02 00:00:00 CET 2017"), new Float( "4.0"));
         reportingUser.reportHours("Overhead", "No activity specified", formatter.parse("Thu Jan 05 00:00:00 CET 2017"), new Float("2.0"));
@@ -42,7 +43,7 @@ public class TeamReportTest {
 
     @Test
     public void getTaskNames() throws Exception {
-        ReportingUser reportingUser = generateReportingUser();
+        ReportingUser reportingUser = generateReportingUser(year, userName);
         TeamReport teamReport = new TeamReport();
         teamReport.addReportingUser(reportingUser);
         List<String> taskNames = teamReport.getTaskNames();
@@ -72,12 +73,9 @@ public class TeamReportTest {
 
     @Test
     public void getReportingUsersNames() throws Exception {
-        ReportingUser reportingUser = generateReportingUser();
-        reportingUser.setName("Foo");
-        ReportingUser reportingUser1 = generateReportingUser();
-        reportingUser1.setName("Bar");
-        ReportingUser reportingUser2 = generateReportingUser();
-        reportingUser2.setName("Bazz");
+        ReportingUser reportingUser = generateReportingUser(year, "Foo");
+        ReportingUser reportingUser1 = generateReportingUser(year, "Bar");
+        ReportingUser reportingUser2 = generateReportingUser(year, "Bazz");
         List<ReportingUser> reportingUserList = new ArrayList<>();
         reportingUserList.add(reportingUser);
         reportingUserList.add(reportingUser1);
@@ -93,7 +91,7 @@ public class TeamReportTest {
 
     @Test
     public void getTaskHours() throws Exception, ReportingException {
-        ReportingUser reportingUser = generateReportingUser();
+        ReportingUser reportingUser = generateReportingUser(year, userName);
         TeamReport teamReport = new TeamReport();
         teamReport.addReportingUser(reportingUser);
         assertEquals(new Float("4.0"), teamReport.getTaskHours("Holidays No activity specified", reportingUser.getName()));

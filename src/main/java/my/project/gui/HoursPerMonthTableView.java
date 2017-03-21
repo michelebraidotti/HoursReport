@@ -8,7 +8,7 @@ import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import my.project.data.ReportingUser;
 
-import java.util.List;
+import java.util.Calendar;
 
 /**
  * Created by michele on 3/11/17.
@@ -28,8 +28,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn janHoursCol = new TableColumn("Jan");
         janHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[0]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.JANUARY));
             }
         });
         janHoursCol.setMinWidth(20);
@@ -37,8 +36,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn febHoursCol = new TableColumn("Feb");
         febHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[1]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.FEBRUARY));
             }
         });
         febHoursCol.setMinWidth(20);
@@ -46,8 +44,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn marHoursCol = new TableColumn("Mar");
         marHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[2]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.MARCH));
             }
         });
         marHoursCol.setMinWidth(20);
@@ -55,8 +52,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn aprHoursCol = new TableColumn("Apr");
         aprHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[3]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.APRIL));
             }
         });
         aprHoursCol.setMinWidth(20);
@@ -64,8 +60,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn mayHoursCol = new TableColumn("May");
         mayHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[4]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.MAY));
             }
         });
         mayHoursCol.setMinWidth(20);
@@ -73,8 +68,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn junHoursCol = new TableColumn("Jun");
         junHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[5]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.JUNE));
             }
         });
         junHoursCol.setMinWidth(20);
@@ -82,8 +76,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn julHoursCol = new TableColumn("Jul");
         julHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[6]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.JULY));
             }
         });
         julHoursCol.setMinWidth(20);
@@ -91,8 +84,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn augHoursCol = new TableColumn("Aug");
         augHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[7]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.AUGUST));
             }
         });
         augHoursCol.setMinWidth(20);
@@ -100,8 +92,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn septHoursCol = new TableColumn("Sep");
         septHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[8]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.SEPTEMBER));
             }
         });
         septHoursCol.setMinWidth(20);
@@ -109,8 +100,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn octHoursCol = new TableColumn("Oct");
         octHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[9]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.OCTOBER));
             }
         });
         octHoursCol.setMinWidth(20);
@@ -118,8 +108,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn novHoursCol = new TableColumn("Nov");
         novHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[10]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.NOVEMBER));
             }
         });
         novHoursCol.setMinWidth(20);
@@ -127,8 +116,7 @@ public class HoursPerMonthTableView extends TableView {
         TableColumn decHoursCol = new TableColumn("Dec");
         decHoursCol.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ReportingUser, Float>, ObservableValue<Float>>() {
             public ObservableValue<Float> call(TableColumn.CellDataFeatures<ReportingUser, Float> r) {
-                Float[] res = r.getValue().reportHoursPerMonth();
-                return new ReadOnlyObjectWrapper(res[11]);
+                return new ReadOnlyObjectWrapper(r.getValue().totalHoursPerMonth(Calendar.DECEMBER));
             }
         });
         decHoursCol.setMinWidth(20);

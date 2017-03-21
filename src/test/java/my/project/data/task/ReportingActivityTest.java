@@ -1,4 +1,4 @@
-package my.project.data;
+package my.project.data.task;
 
 import org.junit.Test;
 

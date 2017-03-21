@@ -21,7 +21,7 @@ public class TeamReport {
     public List<String> getTaskNames() {
         List<String> taskNames = new ArrayList<>();
         for (ReportingUser reportingUser:reportingUsers) {
-            taskNames.addAll(reportingUser.reportHoursPerTask().keySet());
+            taskNames.addAll(reportingUser.totalHoursPerTask().keySet());
         }
         return taskNames;
     }
@@ -35,7 +35,7 @@ public class TeamReport {
     }
 
     public Float getTaskHours(String task, String userName) throws ReportingException {
-        Map<String, Float> hoursPerTask = getReportingUser(userName).reportHoursPerTask();
+        Map<String, Float> hoursPerTask = getReportingUser(userName).totalHoursPerTask();
         if ( hoursPerTask.containsKey(task)) {
             return hoursPerTask.get(task);
         }

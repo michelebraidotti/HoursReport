@@ -1,4 +1,6 @@
-package my.project.data;
+package my.project.data.task;
+
+import my.project.data.task.ReportingHours;
 
 import java.util.ArrayList;
 import java.util.Date;

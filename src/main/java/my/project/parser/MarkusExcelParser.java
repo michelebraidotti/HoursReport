@@ -1,5 +1,6 @@
 package my.project.parser;
 
+import my.project.data.ReportingException;
 import my.project.data.ReportingUser;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -41,10 +42,8 @@ public class MarkusExcelParser {
         return reportingUser;
     }
 
-    public void parse() {
-        reportingUser = new ReportingUser();
-        reportingUser.setName(parseUserName());
-        reportingUser.setYear(parseYear());
+    public void parse() throws ReportingException {
+        reportingUser = new ReportingUser(parseYear(), parseUserName());
         parseTaskList();
     }
 
@@ -59,7 +58,7 @@ public class MarkusExcelParser {
         return year;
     }
 
-    private void parseTaskList() {
+    private void parseTaskList() throws ReportingException {
         Iterator<Sheet> sheetIterator = workbook.sheetIterator();
         while (sheetIterator.hasNext()) {
             Sheet sheet = sheetIterator.next();
@@ -116,7 +115,7 @@ public class MarkusExcelParser {
         return taskName;
     }
 
-    private void parseBookHours(Sheet sheet, Row row, String taskName, String activityName) {
+    private void parseBookHours(Sheet sheet, Row row, String taskName, String activityName) throws ReportingException {
         Iterator<Cell> cellIterator = row.iterator();
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
@@ -124,9 +123,7 @@ public class MarkusExcelParser {
                 if (cell.getCellTypeEnum().equals(NUMERIC)) {
                     Date date = findDateFromColumnNumber(sheet, cell.getAddress().getColumn());
                     Float hours = new Float(cell.getNumericCellValue());
-                    reportingUser
-                            .findReportingTaskByName(taskName)
-                            .reportHours(activityName, date, hours);
+                    reportingUser.reportHours(taskName, activityName, date, hours);
                 }
             }
         }
