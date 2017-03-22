@@ -56,7 +56,8 @@ public class CalendarReportTabPane extends TabPane {
     private TabPane buildCalendarViewTabPane(ReportingUser reportingUser) {
         TabPane tabPane = new TabPane();
         for (int i = Calendar.JANUARY; i <= Calendar.DECEMBER; i++) {
-            MonthReportTableView tableView = new MonthReportTableView(reportingUser, i);
+            MonthReportTableView tableView = new MonthReportTableView(reportingUser.getYear(), i);
+            tableView.setData(reportingUser);
             VBox vBox = new VBox();
             vBox.setSpacing(5);
             vBox.setPadding(new Insets(10, 10, 10, 10));

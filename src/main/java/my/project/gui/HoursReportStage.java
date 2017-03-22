@@ -45,7 +45,6 @@ public class HoursReportStage extends Stage {
 
 
     private ObservableList<ReportingUser> reportingUsers = FXCollections.observableArrayList();
-    private Tab hoursPerTaskTab;
     private CalendarReportTabPane calendarReportTabPane;
 
     public HoursReportStage() throws IOException {
@@ -61,15 +60,9 @@ public class HoursReportStage extends Stage {
         root.add(buildMenuBar(), 0, rowNumber++);
 
         TabPane tabPane = new TabPane();
-        // hours per month tab
         Tab hoursPerMonthTab = buildHoursPerMonthTab();
-
-        // hours per task tab
-        hoursPerTaskTab = new Tab(REPORT_PER_TASK_TAB_TITLE);
-        hoursPerTaskTab.setContent(null);
-        hoursPerTaskTab.setClosable(false);
-
-        // hours per day tab
+        Tab hoursPerTaskTab = buildHoursPerTaskTab();
+        // Calendar report tab is a bit more complicated
         calendarReportTabPane = new CalendarReportTabPane(reportingUsers);
         Tab calendarReportTab = new Tab(CALENDAR_REPORT_TAB_TITLE);
         calendarReportTab.setContent(calendarReportTabPane);
@@ -82,26 +75,21 @@ public class HoursReportStage extends Stage {
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
-    private void updateHoursPerTaskTab() throws ReportingException {
-        // Create and compute report
+    private Tab buildHoursPerTaskTab() {
+        Tab hoursPerTaskTab = new Tab(REPORT_PER_TASK_TAB_TITLE);
+        hoursPerTaskTab.setContent(null);
+        hoursPerTaskTab.setClosable(false);
         TeamReport teamReport = new TeamReport();
         teamReport.addAllReportingUsers(reportingUsers);
+        // TODO refactor HoursPerTaskTableView to make it easier to build
         // Create the table
         HoursPerTaskTableView hoursPerTaskTableView = new HoursPerTaskTableView();
         hoursPerTaskTableView.createColumns(teamReport.getReportingUsersNames());
-        // Populating the tables
-        ObservableList<Map> hoursPerTaskData = FXCollections.observableArrayList();
-        for (String taskName:teamReport.getTaskNames()) {
-            Map<String, String> dataRow = new HashMap<>();
-            // first col is the task name
-            dataRow.put(HoursPerTaskTableView.TASK_COL_NAME, taskName);
-            // all other cols is the hours per task per user
-            for (String reportingUserName:teamReport.getReportingUsersNames()) {
-                dataRow.put(reportingUserName, teamReport.getTaskHours(taskName, reportingUserName).toString());
-            }
-            hoursPerTaskData.add(dataRow);
+        try {
+            hoursPerTaskTableView.setHoursPerTaskData(teamReport);
+        } catch (ReportingException e) {
+            HoursRerportAlerts.errorDialog("Error during report set up", e);
         }
-        hoursPerTaskTableView.setItems(hoursPerTaskData);
 
         // add to table to tab
         VBox vBox = new VBox();
@@ -110,6 +98,7 @@ public class HoursReportStage extends Stage {
         hoursPerTaskTableView.setPrefHeight(700);
         vBox.getChildren().add(hoursPerTaskTableView);
         hoursPerTaskTab.setContent(vBox);
+        return hoursPerTaskTab;
     }
 
     private Tab buildHoursPerMonthTab() {

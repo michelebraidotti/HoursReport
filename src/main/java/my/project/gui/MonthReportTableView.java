@@ -20,20 +20,24 @@ import java.util.Map;
  */
 public class MonthReportTableView extends TableView {
     private static final String TASK_COL_NAME = "Task";
+    private final int year;
+    private final int month;
     private ObservableList<Map> data = FXCollections.observableArrayList();
 
-    public MonthReportTableView(ReportingUser reportingUser, int monthNumber) {
+    public MonthReportTableView(int year, int month) {
+        this.year = year;
+        this.month = month;
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
-        cal.set(Calendar.MONTH, monthNumber);
-        cal.set(Calendar.YEAR, reportingUser.getYear());
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.YEAR, year);
         // Create first col
         TableColumn<Map, String> taskNameColumn = new TableColumn<>(TASK_COL_NAME);
         taskNameColumn.setCellValueFactory(new MapValueFactory(TASK_COL_NAME));
         taskNameColumn.setMinWidth(100);
         this.getColumns().add(taskNameColumn);
         // Create one col per day in the month
-        while ( monthNumber==cal.get(Calendar.MONTH) ) {
+        while ( month==cal.get(Calendar.MONTH) ) {
             TableColumn<Map, String> column = new TableColumn<>(getColName(cal));
             column.setCellValueFactory(new MapValueFactory(getColName(cal)));
             column.setMinWidth(50);
@@ -42,20 +46,22 @@ public class MonthReportTableView extends TableView {
             getColumns().add(column);
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
-        // fill the table with data
-        // TODO should be replaced with a function that adds one row at the time
+    }
+
+    public void setData(ReportingUser reportingUser) {
+        Calendar cal = Calendar.getInstance();
         for (ReportingTask reportingTask:reportingUser.getReportingTaskList()) {
             for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {
                 Map<String, String> dataRow = new HashMap<>();
                 dataRow.put(TASK_COL_NAME, reportingTask.getName() + " " + reportingActivity.getName());
                 cal.set(Calendar.DAY_OF_MONTH, 1);
-                cal.set(Calendar.MONTH, monthNumber);
+                cal.set(Calendar.MONTH, month);
                 cal.set(Calendar.YEAR, reportingUser.getYear());
                 cal.set(Calendar.HOUR_OF_DAY, 0);
                 cal.set(Calendar.MINUTE, 0);
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.MILLISECOND, 0);
-                while (monthNumber == cal.get(Calendar.MONTH)) {
+                while (month == cal.get(Calendar.MONTH)) {
                     dataRow.put(getColName(cal), reportingActivity.getHoursReportedByDate(cal.getTime()).toString());
                     cal.add(Calendar.DAY_OF_MONTH, 1);
                 }
