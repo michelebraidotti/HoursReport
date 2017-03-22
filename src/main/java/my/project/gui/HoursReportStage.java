@@ -39,13 +39,14 @@ public class HoursReportStage extends Stage {
     private static final double DEFAULT_HEIGHT = 800;
     private static final String REPORT_PER_MONTH_TAB_TITLE = "Hours per month";
     private static final String REPORT_PER_TASK_TAB_TITLE = "Hours per task";
+    private static final String CALENDAR_REPORT_TAB_TITLE = "Hours per day";
     private static final String ABOUT_MENU_TEXT = "About";
-    private static final String HOURS_PER_DAY_TAB_TITLE = "Hours per day";
+
 
 
     private ObservableList<ReportingUser> reportingUsers = FXCollections.observableArrayList();
     private Tab hoursPerTaskTab;
-    private final Tab hoursPerDayTab;
+    private CalendarReportTabPane calendarReportTabPane;
 
     public HoursReportStage() throws IOException {
 
@@ -69,26 +70,16 @@ public class HoursReportStage extends Stage {
         hoursPerTaskTab.setClosable(false);
 
         // hours per day tab
-        hoursPerDayTab = new Tab(HOURS_PER_DAY_TAB_TITLE);
-        hoursPerDayTab.setContent(null);
-        hoursPerDayTab.setClosable(false);
+        calendarReportTabPane = new CalendarReportTabPane(reportingUsers);
+        Tab calendarReportTab = new Tab(CALENDAR_REPORT_TAB_TITLE);
+        calendarReportTab.setContent(calendarReportTabPane);
+        calendarReportTab.setClosable(false);
 
-        tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab, hoursPerDayTab);
+        tabPane.getTabs().addAll(hoursPerMonthTab, hoursPerTaskTab, calendarReportTab);
         root.add(tabPane, 0, rowNumber++);
 
         setTitle(MAIN_WINDOW_TITLE_TEXT);
         setScene(new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT));
-    }
-
-    private TabPane updateHoursPerDayTab() {
-        TabPane tabPane = new TabPane();
-        for (ReportingUser reportingUser:reportingUsers) {
-            Tab tab = new Tab(reportingUser.getName());
-            tab.setContent(new ReportingUserCalendarView(reportingUser));
-            tab.setClosable(false);
-            tabPane.getTabs().add(tab);
-        }
-        return tabPane;
     }
 
     private void updateHoursPerTaskTab() throws ReportingException {
@@ -188,7 +179,6 @@ public class HoursReportStage extends Stage {
             for (File file:files) {
                 parseFile(file);
             }
-            hoursPerDayTab.setContent(updateHoursPerDayTab());
         }
     }
 

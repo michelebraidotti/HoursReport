@@ -18,11 +18,11 @@ import java.util.Map;
 /**
  * Created by michele on 3/15/17.
  */
-public class ReportingUserCalendarTableView extends TableView {
-
+public class MonthReportTableView extends TableView {
     private static final String TASK_COL_NAME = "Task";
+    private ObservableList<Map> data = FXCollections.observableArrayList();
 
-    public ReportingUserCalendarTableView(ReportingUser reportingUser, int monthNumber) {
+    public MonthReportTableView(ReportingUser reportingUser, int monthNumber) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 1);
         cal.set(Calendar.MONTH, monthNumber);
@@ -43,7 +43,7 @@ public class ReportingUserCalendarTableView extends TableView {
             cal.add(Calendar.DAY_OF_MONTH, 1);
         }
         // fill the table with data
-        ObservableList<Map> data = FXCollections.observableArrayList();
+        // TODO should be replaced with a function that adds one row at the time
         for (ReportingTask reportingTask:reportingUser.getReportingTaskList()) {
             for (ReportingActivity reportingActivity:reportingTask.getReportingActivityList()) {
                 Map<String, String> dataRow = new HashMap<>();

@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
  * Created by michele on 3/21/17.
  */
 public class ReportingYearTest {
-
     private int year = 2016;
     private ReportingYear reportingYear;
     private String testUser = "testUser";
@@ -62,6 +61,48 @@ public class ReportingYearTest {
         }
     }
 
+    /*
+
+        reportingYear.reportHours("task0","activity0", date, new Float("1.1"));
+        reportingYear.reportHours("task0","activity1", date, new Float("2.0"));
+
+        reportingYear.reportHours("task0","activity0", date, new Float("1.0"));
+        reportingYear.reportHours("task1","activity0", date, new Float("3.0"));
+
+        reportingYear.reportHours("task0","activity1", date, new Float("3.0"));
+        reportingYear.reportHours("task1","activity0", date, new Float("4.0"));
+     */
+
+    @Test
+    public void totalHoursPerTaskActivityPerDay() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, oneDay);
+        Date date = new Date();
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("1.1"), reportingYear.totalHoursPerTaskActivityPerDay("task0", "activity0", date));
+        assertEquals(new Float("2.0"), reportingYear.totalHoursPerTaskActivityPerDay("task0", "activity1", date));
+        cal.set(Calendar.MONTH, month + 1);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("1.0"), reportingYear.totalHoursPerTaskActivityPerDay("task0", "activity0", date));
+        assertEquals(new Float("3.0"), reportingYear.totalHoursPerTaskActivityPerDay("task1", "activity0", date));
+        cal.set(Calendar.DAY_OF_MONTH, oneDay + 2);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("3.0"), reportingYear.totalHoursPerTaskActivityPerDay("task0", "activity1", date));
+        assertEquals(new Float("4.0"), reportingYear.totalHoursPerTaskActivityPerDay("task1", "activity0", date));
+        cal.set(Calendar.YEAR, year + 1);
+        date.setTime(cal.getTimeInMillis());
+        try {
+            reportingYear.totalHoursPerTaskActivityPerDay("task0", "activity0", date);
+            assertTrue(false);
+        }
+        catch (ReportingException e) {
+            assertTrue(StringUtils.isNotEmpty(e.getMessage()));
+            assertTrue(true);
+        }
+    }
+
     @Test
     public void totalHoursPerDay() throws Exception {
         Calendar cal = Calendar.getInstance();
@@ -74,6 +115,19 @@ public class ReportingYearTest {
         cal.set(Calendar.MONTH, month + 1);
         date.setTime(cal.getTimeInMillis());
         assertEquals(new Float("4.0"), reportingYear.totalHoursPerDay(date));
+        cal.set(Calendar.DAY_OF_MONTH, oneDay + 2);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("7.0"), reportingYear.totalHoursPerDay(date));
+        cal.set(Calendar.YEAR, year + 1);
+        date.setTime(cal.getTimeInMillis());
+        try {
+            reportingYear.totalHoursPerDay(date);
+            assertTrue(false);
+        }
+        catch (ReportingException e) {
+            assertTrue(StringUtils.isNotEmpty(e.getMessage()));
+            assertTrue(true);
+        }
     }
 
     @Test

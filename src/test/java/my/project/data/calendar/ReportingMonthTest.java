@@ -19,8 +19,9 @@ public class ReportingMonthTest {
     private ReportingMonth reportingMonth;
     private int year = 2016;
     private int month = Calendar.JANUARY;
-    private int oneDay = 5;
+    private int oneDay = 1;
     private int otherDay = 7;
+    private int lastDay = 31;
     private String testUser = "testUser";
 
     @Before
@@ -32,12 +33,15 @@ public class ReportingMonthTest {
         cal.set(Calendar.DAY_OF_MONTH, oneDay);
         Date date = new Date();
         date.setTime(cal.getTimeInMillis());
-        reportingMonth.reportHours("task0", "activiy0", date, new Float("1.0"));
-        reportingMonth.reportHours("task0", "activiy1", date, new Float("2.0"));
+        reportingMonth.reportHours("task0", "activity0", date, new Float("1.0"));
+        reportingMonth.reportHours("task0", "activity1", date, new Float("2.0"));
         cal.set(Calendar.DAY_OF_MONTH, otherDay);
         date.setTime(cal.getTimeInMillis());
-        reportingMonth.reportHours("task0", "activiy0", date, new Float("3.0"));
-        reportingMonth.reportHours("task1", "activiy0", date, new Float("3.0"));
+        reportingMonth.reportHours("task0", "activity0", date, new Float("3.0"));
+        reportingMonth.reportHours("task1", "activity0", date, new Float("3.0"));
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        date.setTime(cal.getTimeInMillis());
+        reportingMonth.reportHours("task2", "activity0", date, new Float("99.9"));
     }
 
     @Test
@@ -51,7 +55,7 @@ public class ReportingMonthTest {
         Date date = new Date();
         date.setTime(cal.getTimeInMillis());
         try {
-            reportingMonth.reportHours("task0", "activiy0", date, new Float("3.0"));
+            reportingMonth.reportHours("task0", "activity0", date, new Float("3.0"));
             // should not reach this assertion
             assertTrue(false);
         }
@@ -61,6 +65,46 @@ public class ReportingMonthTest {
             assertTrue(true);
         }
     }
+
+    /*
+
+        reportingMonth.reportHours("task0", "activity0", date, new Float("1.0"));
+        reportingMonth.reportHours("task0", "activity1", date, new Float("2.0"));
+        reportingMonth.reportHours("task0", "activity0", date, new Float("3.0"));
+        reportingMonth.reportHours("task1", "activity0", date, new Float("3.0"));
+        reportingMonth.reportHours("task2", "activity0", date, new Float("99.9"));
+
+     */
+
+    @Test
+    public void totalHoursPerTaskActivityPerDay() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, oneDay);
+        Date date = new Date();
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("1.0"), reportingMonth.totalHoursPerTaskActivityPerDay("task0", "activity0", date));
+        assertEquals(new Float("2.0"), reportingMonth.totalHoursPerTaskActivityPerDay("task0", "activity1", date));
+        cal.set(Calendar.DAY_OF_MONTH, otherDay);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("3.0"), reportingMonth.totalHoursPerTaskActivityPerDay("task0", "activity0", date));
+        assertEquals(new Float("3.0"), reportingMonth.totalHoursPerTaskActivityPerDay("task1", "activity0", date));
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("99.9"), reportingMonth.totalHoursPerTaskActivityPerDay("task2", "activity0", date));
+        cal.set(Calendar.MONTH, month + 1);
+        date.setTime(cal.getTimeInMillis());
+        try {
+            reportingMonth.totalHoursPerTaskActivityPerDay("task0", "activity0", date);
+            assertTrue(false);
+        }
+        catch (ReportingException e) {
+            assertTrue(StringUtils.isNotEmpty(e.getMessage()));
+            assertTrue(true);
+        }
+    }
+
 
     @Test
     public void totalHoursPerDay() throws Exception {
@@ -74,6 +118,9 @@ public class ReportingMonthTest {
         cal.set(Calendar.DAY_OF_MONTH, otherDay);
         date.setTime(cal.getTimeInMillis());
         assertEquals(new Float("6.0"), reportingMonth.totalHoursPerDay(date));
+        cal.set(Calendar.DAY_OF_MONTH, lastDay);
+        date.setTime(cal.getTimeInMillis());
+        assertEquals(new Float("99.9"), reportingMonth.totalHoursPerDay(date));
         cal.set(Calendar.MONTH, month + 1);
         date.setTime(cal.getTimeInMillis());
         try {
@@ -84,12 +131,11 @@ public class ReportingMonthTest {
             assertTrue(StringUtils.isNotEmpty(e.getMessage()));
             assertTrue(true);
         }
-
     }
 
     @Test
     public void totalHours() throws Exception {
-        assertEquals(new Float("9.0"), reportingMonth.totalHours());
+        assertEquals(new Float("108.9"), reportingMonth.totalHours());
     }
 
     @Test

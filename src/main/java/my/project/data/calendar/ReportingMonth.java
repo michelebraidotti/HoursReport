@@ -49,18 +49,19 @@ public class ReportingMonth {
             throw new ReportingException("Month mismatch. Trying to report '" + taskName + " " + activityName
                     + "' to month " + cal.get(Calendar.MONTH) + " but object refers to month " + month);
         }
-        ReportingDay reportingDay = reportingDays.get(cal.get(Calendar.DAY_OF_MONTH));
+        ReportingDay reportingDay = reportingDays.get(cal.get(Calendar.DAY_OF_MONTH) - 1);
         reportingDay.reportHours(taskName, activityName, amount);
     }
 
+    public Float totalHoursPerTaskActivityPerDay(String taskName, String activityName, Date day) throws ReportingException {
+        Calendar cal = convert(day);
+        ReportingDay reportingDay = reportingDays.get(cal.get(Calendar.DAY_OF_MONTH) - 1);
+        return reportingDay.totalHoursPerTaskAndActivity(taskName, activityName);
+    }
+
     public Float totalHoursPerDay(Date day) throws ReportingException {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(day);
-        if (cal.get(Calendar.MONTH) != month) {
-            throw new ReportingException("Month mismatch. Trying to compute hours for month " + cal.get(Calendar.MONTH)
-                    + " but object refers to month " + month);
-        }
-        ReportingDay reportingDay = reportingDays.get(cal.get(Calendar.DAY_OF_MONTH));
+        Calendar cal = convert(day);
+        ReportingDay reportingDay = reportingDays.get(cal.get(Calendar.DAY_OF_MONTH) - 1);
         return reportingDay.totalHours();
     }
 
@@ -70,6 +71,16 @@ public class ReportingMonth {
             total = total + reportingDay.totalHours();
         }
         return total;
+    }
+
+    private Calendar convert(Date day) throws ReportingException {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(day);
+        if (cal.get(Calendar.MONTH) != month) {
+            throw new ReportingException("Month mismatch. Trying to compute hours for month " + cal.get(Calendar.MONTH)
+                    + " but object refers to month " + month);
+        }
+        return cal;
     }
 
     @Override

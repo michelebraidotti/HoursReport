@@ -24,7 +24,18 @@ public class ReportingDay {
         activity.hours = hours;
     }
 
-    //public void addHours(String taskName, String activityName, Float hours) {}
+    public Float totalHoursPerTaskAndActivity(String taskName, String activityName) {
+        for (Task task:taskList) {
+            if (task.name.equals(taskName)) {
+                for (Activity activity : task.activityList) {
+                    if (activity.name.equals(activityName)) {
+                        return activity.hours;
+                    }
+                }
+            }
+        }
+        return new Float("0.0");
+    }
 
     public Float totalHours() {
         Float total = new Float("0.0");

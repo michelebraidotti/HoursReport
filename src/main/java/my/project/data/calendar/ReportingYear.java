@@ -36,18 +36,29 @@ public class ReportingYear {
         }
     }
 
+    public Float totalHoursPerTaskActivityPerDay(String taskName, String activityName, Date day) throws ReportingException {
+        Calendar cal = convert(day);
+        return reportingMonths[cal.get(Calendar.MONTH)].totalHoursPerTaskActivityPerDay(taskName, activityName, day);
+    }
+
     public Float totalHoursPerDay(Date day) throws ReportingException {
+        Calendar cal = convert(day);
+        return reportingMonths[cal.get(Calendar.MONTH)].totalHoursPerDay(day);
+    }
+
+    public Float totalHoursPerMonth(int month) {
+        return reportingMonths[month].totalHours();
+    }
+
+
+    private Calendar convert(Date day) throws ReportingException {
         Calendar cal = Calendar.getInstance();
         cal.setTime(day);
         if ( cal.get(Calendar.YEAR) !=  year ) {
             throw new ReportingException("Year mismatch. Trying to compute hours for year " + cal.get(Calendar.YEAR)
                     + " but object refers to year " + year);
         }
-        return reportingMonths[cal.get(Calendar.MONTH)].totalHoursPerDay(day);
-    }
-
-    public Float totalHoursPerMonth(int month) {
-        return reportingMonths[month].totalHours();
+        return cal;
     }
 
     @Override
