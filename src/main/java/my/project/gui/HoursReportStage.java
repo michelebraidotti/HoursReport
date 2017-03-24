@@ -15,15 +15,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import my.project.data.ReportingException;
 import my.project.data.ReportingUser;
-import my.project.data.TeamReport;
 import my.project.parser.MarkusExcelParser;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by michele on 3/10/17.
@@ -79,19 +76,7 @@ public class HoursReportStage extends Stage {
         Tab hoursPerTaskTab = new Tab(REPORT_PER_TASK_TAB_TITLE);
         hoursPerTaskTab.setContent(null);
         hoursPerTaskTab.setClosable(false);
-        TeamReport teamReport = new TeamReport();
-        teamReport.addAllReportingUsers(reportingUsers);
-        // TODO refactor HoursPerTaskTableView to make it easier to build
-        // Create the table
-        HoursPerTaskTableView hoursPerTaskTableView = new HoursPerTaskTableView();
-        hoursPerTaskTableView.createColumns(teamReport.getReportingUsersNames());
-        try {
-            hoursPerTaskTableView.setHoursPerTaskData(teamReport);
-        } catch (ReportingException e) {
-            HoursRerportAlerts.errorDialog("Error during report set up", e);
-        }
-
-        // add to table to tab
+        HoursPerTaskTableView hoursPerTaskTableView = new HoursPerTaskTableView(reportingUsers);
         VBox vBox = new VBox();
         vBox.setSpacing(5);
         vBox.setPadding(new Insets(10, 10, 10, 10));
